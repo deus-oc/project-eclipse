@@ -1,0 +1,238 @@
+package Program;
+import java.awt.event.*; 
+import javax.swing.*;
+import java.io.*;
+import java.awt.GridLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+//for excel
+import java.io.File;  
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;  
+import org.apache.poi.ss.usermodel.Cell;  
+import org.apache.poi.ss.usermodel.Row;  
+import org.apache.poi.xssf.usermodel.XSSFSheet;  
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+//
+
+public class graphic{
+    JFrame frame;
+    JLabel mainLabel, headerLabel, imageLabel, regText, notFound,  hyperlink;
+    JTextField regField;
+    JButton regSubmit;
+    JTable tableData;
+    JPanel mainPanel,firstPanel, secondPanel, panelImage, submitPanel, allReportPanel;
+
+    graphic() {
+    	
+        frame = new JFrame();
+        frame.setTitle("Generate Student Report");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //main label
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(2, 1));
+        //
+        //first and second label
+        firstPanel = new JPanel();
+        secondPanel = new JPanel();
+        secondPanel.setLayout(new GridLayout(4,1));        
+        //
+        // create a new image icon
+        ImageIcon imageA = new ImageIcon("/home/deus-oc/project/symbol.png"); 
+        imageLabel = new JLabel(imageA);
+        
+        panelImage = new JPanel(); 
+        panelImage.add(imageLabel); 
+        firstPanel.add(panelImage);
+        mainPanel.add(firstPanel);
+
+        //text field
+        submitPanel = new JPanel();
+        regText = new JLabel("Reg No.");
+        regField  = new JTextField(3);
+        regSubmit = new JButton("Submit");
+        notFound = new JLabel("");
+        regSubmit.setBounds(50,200,50,50);  
+        
+        double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2}};
+        double[] numSubjectSem = {7,8,8,8};
+		String[][] subNames = {{"Computer Fundamentals and Programming with C","Physics(Quantum Mechanics,Optics and Solid State Physics)", "Analog Electronics","Mathematics –I (Linear Algebra)","English for Communication", "LAB : Computer Fundamentals and Programming with C", "LAB : Analog Electronics"}, 
+							   {"Data Structure", "Mathematics –II (Probability and Statistics)", "Discrete Mathematics","Digital Electronics", "Pyschology","LAB : Data Structure", "LAB : Digital Electronics",  "Environmental Science and Practices",},
+							   {"Mathematics (Calculus)", "Computer  Organization  and Architecture", "Algorithm -I", "Formal Language and Automata", "Humanities II: Economics", "LAB : Computer Organization and Architecture", "LAB : Algorithm –I", "LAB : IT Workshop –I(Python)"},
+							   {"Operating Systems", "Foundation of Data Science", "OOPS (JAVA)", "Data Communications", "System and Signals", "LAB : Operating Systems", "LAB : OOPS(JAVA)", "LAB : IT Workshop –II(SciLab)"}
+		};
+
+        regSubmit.addActionListener(new ActionListener(){
+            @SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent e) {
+                String s = e.getActionCommand(); 
+                if (s.equals("Submit")) { 
+                	try{  
+            			File file = new File("/home/deus-oc/project/data.xlsx");   //creating a new file instance  
+            			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file  
+            			//creating Workbook instance that refers to .xlsx file  
+            			XSSFWorkbook wb = new XSSFWorkbook(fis);   
+            			XSSFSheet sheet = wb.getSheetAt(0);//creating a Sheet object to retrieve object  
+            			Iterator<Row> itr = sheet.iterator();    //iterating over excel file  
+            			System.out.println("Start Iteration");
+            			int valueEntered = 0;
+            			//
+            				ArrayList<String> studentDetails = new ArrayList<String>();
+            				//column name
+            				String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "SGPA5", "SGPA6", "SGPA7", "SGPA8", "CGPA"};
+            				//
+            			//
+            			while (itr.hasNext()){
+            				Row row = itr.next();
+            				Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
+            				//till one row
+            				while (cellIterator.hasNext()){
+            					Cell cell = cellIterator.next();
+            					//just for value
+                					switch (cell.getCellType()){  
+                						case Cell.CELL_TYPE_STRING:    //field that represents string cell type  
+                							if(cell.getStringCellValue() == regField.getText()) {
+                								regText.setText("String");
+                								valueEntered++;
+                								studentDetails.add(regField.getText());
+                								break;
+                							}
+                							else {
+                								if(valueEntered == 1) {
+                    								studentDetails.add(cell.getStringCellValue());
+                								}
+                								System.out.print(cell.getStringCellValue() + "\t\t\t");  
+                								break;                  								
+                							}
+                						case Cell.CELL_TYPE_NUMERIC:    //field that represents number cell type
+                							if(cell.getNumericCellValue() == Integer.parseInt(regField.getText())) {
+                								regText.setText("Number");
+                								valueEntered++;
+                								studentDetails.add(regField.getText());
+                								break;
+                							}
+                							else {
+                								if(valueEntered == 1) {
+                    								studentDetails.add(String.valueOf(cell.getNumericCellValue()));
+                								}
+                    							System.out.print(cell.getNumericCellValue() + "\t\t\t");  
+                    							break;  
+                							}
+                						default:  
+                					}
+            					//just for value
+            					if(valueEntered == 0) {
+            						break;
+            					}
+        					}
+            				//till one row
+            				System.out.println("");
+                			if(valueEntered == 1) {
+                				notFound.setText("");
+                				break;
+                			}
+            			}
+            			if(valueEntered == 0) {
+            				//make JLabel beside the regText "NOT FOUND"
+            				notFound.setText("NOT FOUND!");
+            			}
+            			//checking arraylist
+//                    	for(int i = 0; i < studentDetails.size(); i++) {
+//                    		System.out.println(studentDetails.get(i));
+//                    	}
+                    	//
+                    	//creating a string[][] rowColumn
+                    		String[][] rowColumn = new String[1][7]; //4 semester not still included
+                    		rowColumn[0][0] = studentDetails.get(0);
+                    		rowColumn[0][1] = studentDetails.get(1);
+                    		
+                    		//
+                    		int j = 0;
+                    		double sumSGPA = 0;
+                    		double totalcreditSGPA = 0;
+                    		double totalcreditoneSGPA = 0;
+                    		double sumtotalSGPA = 0;
+                    		int kincrease = -1;
+                    		for(int k = 2; k < studentDetails.size(); k++) {
+                    			kincrease++;
+                    			System.out.println("value of studentDetails.get(k)) is " + Double.valueOf(studentDetails.get(k)));
+                    			System.out.println("value of creditPoints[j][kincrease] is " + creditPoints[j][kincrease]);
+                    			System.out.println("value of kincrease is " + kincrease);
+                    			System.out.println("value of j is " + j)
+                    			//1st sem 7 
+                    			//2nd sem 8
+                    			//3rd sem 8
+                    			//4th sem 8
+                    			sumSGPA += Double.valueOf(studentDetails.get(k))*creditPoints[j][kincrease];
+                    			totalcreditoneSGPA += creditPoints[j][kincrease]; 
+                    			if(kincrease + 1 == numSubjectSem[j]) {
+                    				kincrease = -1;
+                    				sumtotalSGPA += sumSGPA;
+                    				rowColumn[0][j] = String.valueOf(sumSGPA/totalcreditoneSGPA);
+                    				j++;
+                    				totalcreditSGPA += totalcreditoneSGPA;
+                    				totalcreditoneSGPA = 0;
+                    				sumSGPA = 0;
+                    			}
+                    		}
+                    		double CGPA = sumtotalSGPA/totalcreditSGPA;
+                    		rowColumn[1][j] = String.valueOf(CGPA);
+                    	//
+                    		//
+                    		System.out.println("The value of j is " + j);
+                    		for(int q = 0; q < 7; q++) {
+                    			System.out.println(rowColumn[0][q]);
+                    		}
+                    		//
+            		}  
+            		catch(Exception eA){  
+            			eA.printStackTrace();  
+            		}
+                    new reportFrame();
+//                    regText.setText(regField.getText()); 
+                    regField.setText(""); 
+                } 
+            }
+        });
+        submitPanel.add(regText);
+        submitPanel.add(regField);
+        submitPanel.add(regSubmit);
+        submitPanel.add(notFound);
+        secondPanel.add(submitPanel);
+
+        allReportPanel = new JPanel();
+        hyperlink = new JLabel("For all Student abbreviated Report and Analysis");
+        hyperlink.setForeground(Color.BLUE.darker());
+        hyperlink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        allReportPanel.add(hyperlink);
+        secondPanel.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+                new allReportFrame();  
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+        });
+        secondPanel.add(allReportPanel);
+        mainPanel.add(secondPanel);
+        frame.add(mainPanel);
+        frame.setSize(500, 600);
+        frame.validate();  
+        frame.pack();
+        frame.setVisible(true);  
+    }
+    public static void main(final String[] args){ 
+        new graphic();
+    }    
+}
