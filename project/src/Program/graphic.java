@@ -1,10 +1,10 @@
 package Program;
 import java.awt.event.*; 
 import javax.swing.*;
-//import java.io.*;
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+
 //for excel
 import java.io.File;  
 import java.io.FileInputStream;
@@ -22,7 +22,8 @@ public class graphic{
     JTextField regField;
     JButton regSubmit, individualSubmit;
     JTable hiddenTable;
-    JPanel mainPanel,firstPanel, secondPanel, panelImage, submitPanel, allReportPanel, hiddenTablePanel, hiddenButtonPanel;    
+    JPanel mainPanel,firstPanel, secondPanel, secondFirstPanel, second2ndPanel, panelImage, submitPanel, allReportPanel, hiddenTablePanel, hiddenButtonPanel;    
+    int madeHiddenPanel = 0;
     graphic() {
     	
         frame = new JFrame();
@@ -35,8 +36,6 @@ public class graphic{
         //
         //first and second label
         firstPanel = new JPanel();
-        secondPanel = new JPanel();
-        secondPanel.setLayout(new GridLayout(4,1));        
         //
         // create a new image icon
         ImageIcon imageA = new ImageIcon("/home/deus-oc/project/symbol.png"); 
@@ -47,16 +46,18 @@ public class graphic{
         firstPanel.add(panelImage);
         mainPanel.add(firstPanel);
 
-        //text field
+        secondPanel = new JPanel();
+        secondPanel.setLayout(new GridLayout(2,1));        
+        
+        secondFirstPanel = new JPanel();
+        secondFirstPanel.setLayout(new GridLayout(2,1));
+        //text field and all the report link
         submitPanel = new JPanel();
         regText = new JLabel("Reg No.");
         regField  = new JTextField(3);
         regSubmit = new JButton("Submit");
         notFound = new JLabel("");
         regSubmit.setBounds(50,200,50,50);  
-        //insert here
-        
-        //
         double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2}};
         double[] numSubjectSem = {7,8,8,8};
 		String[][] subNames = {{"Computer Fundamentals and Programming with C","Physics(Quantum Mechanics,Optics and Solid State Physics)", "Analog Electronics","Mathematics –I (Linear Algebra)","English for Communication", "LAB : Computer Fundamentals and Programming with C", "LAB : Analog Electronics"}, 
@@ -65,18 +66,16 @@ public class graphic{
 							   {"Operating Systems", "Foundation of Data Science", "OOPS (JAVA)", "Data Communications", "System and Signals", "LAB : Operating Systems", "LAB : OOPS(JAVA)", "LAB : IT Workshop –II(SciLab)"}
 		};
 		//column name
-		String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "SGPA5", "SGPA6", "SGPA7", "SGPA8", "CGPA"};
+//		String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "SGPA5", "SGPA6", "SGPA7", "SGPA8", "CGPA"};
+		String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "CGPA"};
 		String[][] rowColumn = new String[1][7]; //4 semester not still included
-		//to test
-		String[][] table = {{"101","An","3","4","5","6","7","8","9","10","6.5" },{"102","sh","3","4","5","6","7","8","9","10","6.5" }};
-        //
 		regSubmit.addActionListener(new ActionListener(){
             @SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
                 String s = e.getActionCommand(); 
                 if (s.equals("Submit")) { 
-                	try{  
-            			File file = new File("/home/deus-oc/project/data.xlsx");   //creating a new file instance  
+                	try{
+                		File file = new File("/home/deus-oc/project/data.xlsx");   //creating a new file instance  
             			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file  
             			//creating Workbook instance that refers to .xlsx file  
             			XSSFWorkbook wb = new XSSFWorkbook(fis);   
@@ -137,21 +136,17 @@ public class graphic{
                 				break;
                 			}
             			}
+            			//till reading of excel sheet
+                    	wb.close();
+                    	fis.close();            			
             			if(valueEntered == 0) {
             				//make JLabel beside the regText "NOT FOUND"
             				notFound.setText("NOT FOUND!");
             			}
-            			//checking arraylist
-//                    	for(int i = 0; i < studentDetails.size(); i++) {
-//                    		System.out.println(studentDetails.get(i));
-//                    	}
-                    	//
-                    	//creating a string[][] rowColumn
-                    		rowColumn[0][0] = studentDetails.get(0);
+            			else{
+            				rowColumn[0][0] = studentDetails.get(0);
                     		rowColumn[0][1] = studentDetails.get(1);
-                    		
-                    		//
-                    		int j = 0;
+            				int j = 0;
                     		double sumSGPA = 0;
                     		double totalcreditSGPA = 0;
                     		double totalcreditoneSGPA = 0;
@@ -159,14 +154,6 @@ public class graphic{
                     		int kincrease = -1;
                     		for(int k = 2; k < studentDetails.size(); k++) {
                     			kincrease++;
-                    			System.out.println("value of studentDetails.get(k)) is " + Double.valueOf(studentDetails.get(k)));
-                    			System.out.println("value of creditPoints[j][kincrease] is " + creditPoints[j][kincrease]);
-                    			System.out.println("value of kincrease is " + kincrease);
-                    			System.out.println("value of j is " + j);
-                    			//1st sem 7 
-                    			//2nd sem 8
-                    			//3rd sem 8
-                    			//4th sem 8
                     			sumSGPA += Double.valueOf(studentDetails.get(k))*creditPoints[j][kincrease];
                     			totalcreditoneSGPA += creditPoints[j][kincrease]; 
                     			if(kincrease + 1 == numSubjectSem[j]) {
@@ -181,20 +168,48 @@ public class graphic{
                     		}
                     		double CGPA = sumtotalSGPA/totalcreditSGPA;
                     		rowColumn[0][j+2] = String.valueOf(CGPA);
-                    	//
-                    		//
-                    		System.out.println("The value of j is " + j);
                     		for(int q = 0; q < 7; q++) {
                     			System.out.println(rowColumn[0][q]);
                     		}
-                    		//
-            		}  
+                    	}
+                        	//for table and button
+            				System.out.println("value of madeHiddenPanel before is " + madeHiddenPanel);
+                        	if(madeHiddenPanel == 1) {
+                        		second2ndPanel.remove(hiddenButtonPanel);
+                        		second2ndPanel.remove(hiddenTablePanel);
+                        		secondPanel.remove(second2ndPanel);
+                				System.out.println("value of madeHiddenPanel once was " + madeHiddenPanel);
+                        		madeHiddenPanel--;
+                                secondPanel.revalidate();
+                                secondPanel.repaint();
+                        	}
+            				System.out.println("value of madeHiddenPanel after is " + madeHiddenPanel);                        	
+                        	if(valueEntered != 0) {
+                        	  madeHiddenPanel++;
+                          	  second2ndPanel = new JPanel();
+                              second2ndPanel.setLayout(new GridLayout(2,1));
+                              
+                              hiddenTablePanel = new JPanel();
+                              hiddenTable = new JTable(rowColumn, detailName);
+                              hiddenTable.setBounds(100,100,80,80);
+                              hiddenTablePanel.add(new JScrollPane(hiddenTable));
+                              second2ndPanel.add(hiddenTablePanel);
+                              
+                              hiddenButtonPanel = new JPanel();
+                              individualSubmit = new JButton("Check Now!");
+                              regSubmit.setBounds(50,200,50,50);
+                              hiddenButtonPanel.add(individualSubmit);
+                              second2ndPanel.add(hiddenButtonPanel); 
+                              
+                              secondPanel.add(second2ndPanel);
+                              secondPanel.revalidate();
+                              secondPanel.repaint();
+                        	}
+                        	//for table and button                     		
+                	}  
             		catch(Exception eA){  
             			eA.printStackTrace();  
-            		}
-                    hiddenButtonPanel.setVisible(true);
-                    new reportFrame();
-//                    regText.setText(regField.getText()); 
+            		}                      
                     regField.setText(""); 
                 } 
             }
@@ -203,14 +218,14 @@ public class graphic{
         submitPanel.add(regField);
         submitPanel.add(regSubmit);
         submitPanel.add(notFound);
-        secondPanel.add(submitPanel);
+        secondFirstPanel.add(submitPanel);
 
         allReportPanel = new JPanel();
         hyperlink = new JLabel("For all Student abbreviated Report and Analysis");
         hyperlink.setForeground(Color.BLUE.darker());
         hyperlink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         allReportPanel.add(hyperlink);
-        secondPanel.addMouseListener(new MouseListener() {
+        hyperlink.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {
                 new allReportFrame();  
             }
@@ -227,27 +242,14 @@ public class graphic{
             public void mouseReleased(MouseEvent e) {
             }
         });
-        secondPanel.add(allReportPanel);
-        
-        hiddenTablePanel = new JPanel();
-        hiddenTable = new JTable(table, detailName);
-        hiddenTable.setBounds(100,100,100,80);
-        hiddenTablePanel.add(new JScrollPane(hiddenTable));
-        secondPanel.add(hiddenTablePanel);
-        
-        hiddenButtonPanel = new JPanel();
-        individualSubmit = new JButton("Check Now!");
-        regSubmit.setBounds(50,200,50,50);
-        hiddenButtonPanel.add(individualSubmit);
-        hiddenButtonPanel.setVisible(false);
-        secondPanel.add(hiddenButtonPanel);
-        
-        
+        secondFirstPanel.add(allReportPanel);
+                
+        secondPanel.add(secondFirstPanel);
         mainPanel.add(secondPanel);
         frame.add(mainPanel);
         frame.setSize(700, 700);
         frame.validate();  
-        frame.pack();
+//        frame.pack();
         frame.setVisible(true);  
     }
     public static void main(final String[] args){ 

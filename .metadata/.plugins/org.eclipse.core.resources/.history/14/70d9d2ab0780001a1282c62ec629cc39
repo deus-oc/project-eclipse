@@ -1,0 +1,10 @@
+package Program;
+import javax.swing.*;
+
+public class allReportFrame {
+	public allReportFrame() {
+		JFrame report = new JFrame("Full Report");
+		report.setSize(300,300);
+		report.setVisible(true);
+	}
+}
