@@ -1,10 +1,12 @@
 package Program;
 import java.awt.event.*; 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-
+import java.awt.Dimension;
 //for excel
 import java.io.File;  
 import java.io.FileInputStream;
@@ -38,7 +40,7 @@ public class graphic{
         firstPanel = new JPanel();
         //
         // create a new image icon
-        ImageIcon imageA = new ImageIcon("/home/deus-oc/project/symbol.png"); 
+        ImageIcon imageA = new ImageIcon("src/img.png"); 
         imageLabel = new JLabel(imageA);
         
         panelImage = new JPanel(); 
@@ -58,30 +60,25 @@ public class graphic{
         regSubmit = new JButton("Submit");
         notFound = new JLabel("");
         regSubmit.setBounds(50,200,50,50);  
-        double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2}};
-        double[] numSubjectSem = {7,8,8,8};
-		String[][] subNames = {{"Computer Fundamentals and Programming with C","Physics(Quantum Mechanics,Optics and Solid State Physics)", "Analog Electronics","Mathematics –I (Linear Algebra)","English for Communication", "LAB : Computer Fundamentals and Programming with C", "LAB : Analog Electronics"}, 
-							   {"Data Structure", "Mathematics –II (Probability and Statistics)", "Discrete Mathematics","Digital Electronics", "Pyschology","LAB : Data Structure", "LAB : Digital Electronics",  "Environmental Science and Practices",},
-							   {"Mathematics (Calculus)", "Computer  Organization  and Architecture", "Algorithm -I", "Formal Language and Automata", "Humanities II: Economics", "LAB : Computer Organization and Architecture", "LAB : Algorithm –I", "LAB : IT Workshop –I(Python)"},
-							   {"Operating Systems", "Foundation of Data Science", "OOPS (JAVA)", "Data Communications", "System and Signals", "LAB : Operating Systems", "LAB : OOPS(JAVA)", "LAB : IT Workshop –II(SciLab)"}
-		};
-		//column name
-//		String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "SGPA5", "SGPA6", "SGPA7", "SGPA8", "CGPA"};
-		String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "CGPA"};
-		String[][] rowColumn = new String[1][7]; //4 semester not still included
+        double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2},{3,3,3,3,3,3,2,2,2},{3,3,3,3,3,3,2,2,2},{3,3,3,3,3,6},{3,3,3,2,6,2}};
+        double[] numSubjectSem = {7,8,8,8,9,9,6,6};
+
+        
+        String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4","SGPA5","SGPA6","SGPA7","SGPA8","CGPA"};
+		String[][] rowColumn = new String[1][11];
 		regSubmit.addActionListener(new ActionListener(){
             @SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
                 String s = e.getActionCommand(); 
                 if (s.equals("Submit")) { 
                 	try{
-                		File file = new File("/home/deus-oc/project/data.xlsx");   //creating a new file instance  
+                		File file = new File("src/data.xlsx");   //creating a new file instance  
             			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file  
             			//creating Workbook instance that refers to .xlsx file  
             			XSSFWorkbook wb = new XSSFWorkbook(fis);   
             			XSSFSheet sheet = wb.getSheetAt(0);//creating a Sheet object to retrieve object  
             			Iterator<Row> itr = sheet.iterator();    //iterating over excel file  
-            			System.out.println("Start Iteration");
+//            			System.out.println("Start Iteration");
             			int valueEntered = 0;
             			//
             				ArrayList<String> studentDetails = new ArrayList<String>();
@@ -96,7 +93,6 @@ public class graphic{
                 					switch (cell.getCellType()){  
                 						case Cell.CELL_TYPE_STRING:    //field that represents string cell type  
                 							if(cell.getStringCellValue() == regField.getText()) {
-                								regText.setText("String");
                 								valueEntered++;
                 								studentDetails.add(regField.getText());
                 								break;
@@ -105,12 +101,10 @@ public class graphic{
                 								if(valueEntered == 1) {
                     								studentDetails.add(cell.getStringCellValue());
                 								}
-                								System.out.print(cell.getStringCellValue() + "\t\t\t");  
                 								break;                  								
                 							}
                 						case Cell.CELL_TYPE_NUMERIC:    //field that represents number cell type
                 							if(cell.getNumericCellValue() == Integer.parseInt(regField.getText())) {
-                								regText.setText("Number");
                 								valueEntered++;
                 								studentDetails.add(regField.getText());
                 								break;
@@ -119,7 +113,6 @@ public class graphic{
                 								if(valueEntered == 1) {
                     								studentDetails.add(String.valueOf(cell.getNumericCellValue()));
                 								}
-                    							System.out.print(cell.getNumericCellValue() + "\t\t\t");  
                     							break;  
                 							}
                 						default:  
@@ -130,7 +123,7 @@ public class graphic{
             					}
         					}
             				//till one row
-            				System.out.println("");
+//            				System.out.println("");
                 			if(valueEntered == 1) {
                 				notFound.setText("");
                 				break;
@@ -138,7 +131,8 @@ public class graphic{
             			}
             			//till reading of excel sheet
                     	wb.close();
-                    	fis.close();            			
+                    	fis.close();
+                    	//
             			if(valueEntered == 0) {
             				//make JLabel beside the regText "NOT FOUND"
             				notFound.setText("NOT FOUND!");
@@ -168,38 +162,58 @@ public class graphic{
                     		}
                     		double CGPA = sumtotalSGPA/totalcreditSGPA;
                     		rowColumn[0][j+2] = String.valueOf(CGPA);
-                    		for(int q = 0; q < 7; q++) {
-                    			System.out.println(rowColumn[0][q]);
-                    		}
+//                    		for(int q = 0; q < 11; q++) {
+//                    			System.out.println(rowColumn[0][q]);
+//                    		}
                     	}
                         	//for table and button
-            				System.out.println("value of madeHiddenPanel before is " + madeHiddenPanel);
+//            				System.out.println("value of madeHiddenPanel before is " + madeHiddenPanel);
                         	if(madeHiddenPanel == 1) {
                         		second2ndPanel.remove(hiddenButtonPanel);
                         		second2ndPanel.remove(hiddenTablePanel);
                         		secondPanel.remove(second2ndPanel);
-                				System.out.println("value of madeHiddenPanel once was " + madeHiddenPanel);
                         		madeHiddenPanel--;
                                 secondPanel.revalidate();
                                 secondPanel.repaint();
+
                         	}
-            				System.out.println("value of madeHiddenPanel after is " + madeHiddenPanel);                        	
+//            				System.out.println("value of madeHiddenPanel after is " + madeHiddenPanel);                        	
                         	if(valueEntered != 0) {
                         	  madeHiddenPanel++;
                           	  second2ndPanel = new JPanel();
                               second2ndPanel.setLayout(new GridLayout(2,1));
                               
                               hiddenTablePanel = new JPanel();
-                              hiddenTable = new JTable(rowColumn, detailName);
-                              hiddenTable.setBounds(100,100,80,80);
-                              hiddenTablePanel.add(new JScrollPane(hiddenTable));
+                              //create table model with data
+                            	DefaultTableModel model = new DefaultTableModel(rowColumn, detailName) {
+              					private static final long serialVersionUID = 1L;
+
+              					@Override
+                            	    public boolean isCellEditable(int row, int column){
+                            	        return false;
+                            	    }
+                            	};
+                              hiddenTable = new JTable(model);
+                              hiddenTable.setRowHeight(30);
+                              JScrollPane scrollpane = new JScrollPane(hiddenTable);
+                              scrollpane.setPreferredSize(new Dimension(1000, 52));
+                              hiddenTablePanel.add(scrollpane);
                               second2ndPanel.add(hiddenTablePanel);
                               
                               hiddenButtonPanel = new JPanel();
                               individualSubmit = new JButton("Check Now!");
-                              regSubmit.setBounds(50,200,50,50);
+                              individualSubmit.setBounds(50,200,50,50);
                               hiddenButtonPanel.add(individualSubmit);
-                              second2ndPanel.add(hiddenButtonPanel); 
+                              second2ndPanel.add(hiddenButtonPanel);
+                              
+	                      		individualSubmit.addActionListener(new ActionListener(){
+	                    			public void actionPerformed(ActionEvent e) {
+	                                    String s = e.getActionCommand(); 
+	                                    if (s.equals("Check Now!")) {
+	                                    	new reportFrame(studentDetails, rowColumn);
+	                                    } 
+	                                }
+	                      		});
                               
                               secondPanel.add(second2ndPanel);
                               secondPanel.revalidate();
@@ -247,7 +261,7 @@ public class graphic{
         secondPanel.add(secondFirstPanel);
         mainPanel.add(secondPanel);
         frame.add(mainPanel);
-        frame.setSize(700, 700);
+        frame.setSize(1000, 500);
         frame.validate();  
 //        frame.pack();
         frame.setVisible(true);  

@@ -1,8 +1,9 @@
 package Program;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.BorderFactory;
+import javax.swing.table.DefaultTableModel;
 
+import java.awt.Dimension;
 //for excel
 import java.io.File;  
 import java.io.FileInputStream;
@@ -20,16 +21,18 @@ public class allReportFrame {
 	
 	JTable mainTable;
 	JPanel mainPanel;
-	static double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2}};
-    static double[] numSubjectSem = {7,8,8,8};
-    static String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4", "CGPA"};
+    static double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2},{3,3,3,3,3,3,2,2,2},{3,3,3,3,3,3,2,2,2},{3,3,3,3,3,6},{3,3,3,2,6,2}};
+    static double[] numSubjectSem = {7,8,8,8,9,9,6,6};
+
+    static String[] detailName = {"RegNo.", "Name", "SGPA1", "SGPA2", "SGPA3", "SGPA4","SGPA5","SGPA6","SGPA7","SGPA8","CGPA"};
+	@SuppressWarnings("deprecation")
 	public allReportFrame() {
 		report = new JFrame();
 		
         int rowCount = 0;        
         int columnCount = 0;
         try{
-    		File file = new File("/home/deus-oc/project/data.xlsx");   //creating a new file instance  
+    		File file = new File("src/data.xlsx");   //creating a new file instance  
 			FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file  
 			XSSFWorkbook wb = new XSSFWorkbook(fis);   
 			XSSFSheet sheet = wb.getSheetAt(0);//creating a Sheet object to retrieve object  
@@ -61,13 +64,13 @@ public class allReportFrame {
 			}
 			wb.close();
 			fis.close();
-			for(int i=0; i<studentDetails.size(); i++) {
-				System.out.println(studentDetails.get(i));
-			}
+//			for(int i=0; i<studentDetails.size(); i++) {
+//				System.out.println(studentDetails.get(i));
+//			}
 			
 			// generating string[][]
 			int valueOfk = columnCount;
-			String[][] rowColumn = new String[rowCount-1][7]; //4 semester not still included
+			String[][] rowColumn = new String[rowCount-1][11]; //4 semester not still included
 			for(int i = 0; i < rowCount-1; i++) {
 				rowColumn[i][0] = studentDetails.get(valueOfk);
 		        rowColumn[i][1] = studentDetails.get(valueOfk+1);
@@ -93,28 +96,42 @@ public class allReportFrame {
 		        }
 		        double CGPA = sumtotalSGPA/totalcreditSGPA;
 		        rowColumn[i][j+2] = String.valueOf(CGPA);
-		        for(int q = 0; q < 7; q++) {
-		        	System.out.println(rowColumn[i][q]);
-		        }
+//		        for(int q = 0; q < 11; q++) {
+//		        	System.out.println(rowColumn[i][q]);
+//		        }
 		        valueOfk += columnCount;
 			}
 			// generating string[][]
 			
-				//for table generation 
+				//for table generation
               	  mainPanel = new JPanel();
               	  mainPanel.setBorder(BorderFactory.createTitledBorder( BorderFactory.createEtchedBorder(), "FULL STUDENT REPORT", TitledBorder.CENTER, TitledBorder.TOP));
-                  mainTable = new JTable(rowColumn, detailName);
-//                  mainTable.setBounds(100,100,80,80);
-                  mainPanel.add(new JScrollPane(mainTable));
-                  report.add(mainPanel);
+                
+              	//create table model with data
+              	DefaultTableModel model = new DefaultTableModel(rowColumn, detailName) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+              	    public boolean isCellEditable(int row, int column){
+              	        return false;
+              	    }
+              	};
+              	  JScrollPane scrollBar=new JScrollPane(mainPanel);  
+              	  mainTable = new JTable(model);
+              	  mainTable.setRowHeight(30);
+                  mainTable.setAutoCreateRowSorter(true);
+                  JScrollPane scrollpane = new JScrollPane(mainTable);
+                  scrollpane.setPreferredSize(new Dimension(1000, 500));
+                  mainPanel.add(scrollpane);
+//                  report.add(mainPanel);
+                  report.add(scrollBar);
                   //
-    	}  
+    	}  	
 		catch(Exception eA){  
 			eA.printStackTrace();  
 		}
-		report.setSize(500,500);
+		report.setSize(1000,800);
 		report.pack();
 		report.setVisible(true);
-	}
-	
+	}	
 }
