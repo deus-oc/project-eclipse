@@ -5,11 +5,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.GridLayout;
-public class reportFrame {
+public class reportFrame extends data{
 	JFrame report;
 	JPanel mainPanel;
-    static double[][] creditPoints = {{4,3,3,4,3,2,2}, {3,4,4,3,3,2,2,2}, {4,3,3,3,3,2,2,4}, {3,3,4,3,3,2,2,2},{3,3,3,3,3,3,2,2,2},{3,3,3,3,3,3,2,2,2},{3,3,3,3,3,6},{3,3,3,2,6,2}};
-    static double[] numSubjectSem = {7,8,8,8,9,9,6,6};
 	static String[][] subNames = {{"Computer Fundamentals and Programming with C","Physics(Quantum Mechanics,Optics and Solid State Physics)", "Analog Electronics","Mathematics –I (Linear Algebra)","English for Communication", "LAB : Computer Fundamentals and Programming with C", "LAB : Analog Electronics"}, 
 						   {"Data Structure", "Mathematics –II (Probability and Statistics)", "Discrete Mathematics","Digital Electronics", "Pyschology","LAB : Data Structure", "LAB : Digital Electronics",  "Environmental Science and Practices",},
 						   {"Mathematics (Calculus)", "Computer  Organization  and Architecture", "Algorithm -I", "Formal Language and Automata", "Humanities II: Economics", "LAB : Computer Organization and Architecture", "LAB : Algorithm –I", "LAB : IT Workshop –I(Python)"},
@@ -29,7 +27,7 @@ public class reportFrame {
 							    {"EL-801", "EL-802", "OE-801", "CS-801", "PR-801", "CV-801"}
 	};
 	String semName[] =  {"Semester I" , "Semester II", "Semester III", "Semester IV", "Semester V", "Semester VI", "Semester VII", "Semester VIII"};
-	String detailName[] = {"Code", "Subject Name", "Credits", "Grade Point Obtained"};
+	String headerName[] = {"Code", "Subject Name", "Credits", "Grade Point Obtained"};
 	
 	public reportFrame(ArrayList<String> studentDetails, String[][] rowColumn) {		
 		report = new JFrame("Report Card");
@@ -73,7 +71,7 @@ public class reportFrame {
 		studentDetailIndex += (int)numSubjectSem[semCount];
 		// generating columnFill2[][]
 		
-    	DefaultTableModel model1 = new DefaultTableModel(columnFill1, detailName) {
+    	DefaultTableModel model1 = new DefaultTableModel(columnFill1, headerName) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -108,7 +106,7 @@ public class reportFrame {
 		studentDetailIndex += (int)numSubjectSem[semCount];
 		// generating columnFill2[][]
 		
-    	DefaultTableModel model2 = new DefaultTableModel(columnFill2, detailName) {
+    	DefaultTableModel model2 = new DefaultTableModel(columnFill2, headerName) {
 			/**
 			 * 
 			 */
@@ -148,7 +146,7 @@ public class reportFrame {
 		// generating columnFill3[][]
 		
 		
-    	DefaultTableModel model3 = new DefaultTableModel(columnFill3, detailName) {
+    	DefaultTableModel model3 = new DefaultTableModel(columnFill3, headerName) {
 			private static final long serialVersionUID = 1L;
 			@Override
     	    public boolean isCellEditable(int row, int column){
@@ -184,7 +182,7 @@ public class reportFrame {
 		// generating columnFill4[][]
 		
 		
-    	DefaultTableModel model4 = new DefaultTableModel(columnFill4, detailName) {
+    	DefaultTableModel model4 = new DefaultTableModel(columnFill4, headerName) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -221,7 +219,7 @@ public class reportFrame {
 		// generating columnFill5[][]
 		
 		
-    	DefaultTableModel model5 = new DefaultTableModel(columnFill5, detailName) {
+    	DefaultTableModel model5 = new DefaultTableModel(columnFill5, headerName) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -256,7 +254,7 @@ public class reportFrame {
 		studentDetailIndex += (int)numSubjectSem[semCount];
 		// generating columnFill6[][]
 		
-    	DefaultTableModel model6 = new DefaultTableModel(columnFill6, detailName) {
+    	DefaultTableModel model6 = new DefaultTableModel(columnFill6, headerName) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -292,7 +290,7 @@ public class reportFrame {
 		}
 		studentDetailIndex += (int)numSubjectSem[semCount];
 		// generating columnFill7[][]
-    	DefaultTableModel model7 = new DefaultTableModel(columnFill7, detailName) {
+    	DefaultTableModel model7 = new DefaultTableModel(columnFill7, headerName) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -327,7 +325,7 @@ public class reportFrame {
 		studentDetailIndex += (int)numSubjectSem[semCount];
 		// generating columnFill8[][]
 		
-    	DefaultTableModel model8 = new DefaultTableModel(columnFill8, detailName) {
+    	DefaultTableModel model8 = new DefaultTableModel(columnFill8, headerName) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
